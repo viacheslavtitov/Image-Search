@@ -11,7 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import viacheslavtitov.image.search.app.BuildConfig;
 import viacheslavtitov.image.search.app.net.ApiService;
@@ -66,7 +66,7 @@ public final class ApiModule {
                 .client(client) //
                 .baseUrl(baseUrl) //
                 .addConverterFactory(GsonConverterFactory.create(gson)) //
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) //
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create()) //
                 .build();
     }
 
