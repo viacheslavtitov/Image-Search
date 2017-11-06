@@ -7,6 +7,7 @@ import viacheslavtitov.image.search.app.modules.ApiModule;
 import viacheslavtitov.image.search.app.modules.AppComponent;
 import viacheslavtitov.image.search.app.modules.AppModule;
 import viacheslavtitov.image.search.app.modules.DaggerAppComponent;
+import viacheslavtitov.image.search.app.modules.RepositoryModule;
 import viacheslavtitov.image.search.app.modules.UtilsModule;
 
 /**
@@ -38,6 +39,7 @@ public class ImageSearchApplication extends Application {
                 .appModule(new AppModule(this))
                 .apiModule(new ApiModule())
                 .utilsModule(new UtilsModule())
+                .repositoryModule(new RepositoryModule())
                 .build();
     }
 

@@ -10,7 +10,7 @@ import viacheslavtitov.image.search.app.MainActivity;
  */
 
 @Component(modules = {
-        AppModule.class, ApiModule.class, UtilsModule.class
+        AppModule.class, ApiModule.class, UtilsModule.class, RepositoryModule.class
 })
 @Singleton
 public interface AppComponent {

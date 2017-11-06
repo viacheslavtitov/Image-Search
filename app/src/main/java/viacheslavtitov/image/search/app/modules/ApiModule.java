@@ -14,7 +14,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import viacheslavtitov.image.search.app.BuildConfig;
-import viacheslavtitov.image.search.app.net.ApiService;
+import viacheslavtitov.image.search.app.repository.net.ApiService;
 
 /**
  * Created by Viacheslav Titov on 04.11.2017.

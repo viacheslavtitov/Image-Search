@@ -1,4 +1,4 @@
-package viacheslavtitov.image.search.app.net.model;
+package viacheslavtitov.image.search.app.repository.net.model;
 
 import com.google.gson.annotations.SerializedName;
 
