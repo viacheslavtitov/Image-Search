@@ -20,7 +20,7 @@ public class ImageModel {
     public String title;
 
     public String getThumbUrl(int count) {
-        return thumbModels != null && !thumbModels.isEmpty() && count > 0 && count < thumbModels.size()
+        return thumbModels != null && !thumbModels.isEmpty() && count > -1 && count < thumbModels.size()
                 ? thumbModels.get(count).uri : "";
     }
 

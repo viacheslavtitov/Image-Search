@@ -2,6 +2,7 @@ package viacheslavtitov.image.search.app;
 
 import android.app.Application;
 
+import io.realm.Realm;
 import timber.log.Timber;
 import viacheslavtitov.image.search.app.modules.ApiModule;
 import viacheslavtitov.image.search.app.modules.AppComponent;
@@ -24,6 +25,7 @@ public class ImageSearchApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
+        Realm.init(this);
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
