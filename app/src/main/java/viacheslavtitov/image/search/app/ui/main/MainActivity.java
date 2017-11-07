@@ -19,15 +19,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 import viacheslavtitov.image.search.app.ImageSearchApplication;
 import viacheslavtitov.image.search.app.R;
-import viacheslavtitov.image.search.app.repository.RepositoryImpl;
+import viacheslavtitov.image.search.app.presenters.main.IMainView;
+import viacheslavtitov.image.search.app.presenters.main.MainPresenter;
+import viacheslavtitov.image.search.app.presenters.main.MainPresenterImpl;
 import viacheslavtitov.image.search.app.repository.db.model.HistorySearchDBModel;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainView {
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mTextViewError;
 
     @Inject
-    RepositoryImpl mRepositoryImpl;
+    MainPresenterImpl mMainPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         ImageSearchApplication.get().getAppComponent().inject(this);
 
         setUpView();
-
+        mMainPresenter.attachView(this);
+        mMainPresenter.fetchOfflineData();
     }
 
     private void setUpView() {
@@ -70,38 +71,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private Observer<List<HistorySearchDBModel>> mObserverImages = new Observer<List<HistorySearchDBModel>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(List<HistorySearchDBModel> imageModels) {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mTextViewError.setVisibility(View.GONE);
-            mAdapter = new ImageSearchRecyclerAdapter(imageModels);
-            mRecyclerView.setAdapter(mAdapter);
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            mRecyclerView.setVisibility(View.GONE);
-            mTextViewError.setVisibility(View.VISIBLE);
-            mTextViewError.setText(e.getMessage());
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
-
     private SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
             Timber.d("query text submit --- %s", query);
-            mRepositoryImpl.fetchImages(mObserverImages, query);
+            mMainPresenter.fetchOnlineData(query);
             return false;
         }
 
@@ -115,7 +89,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         mRecyclerView.setAdapter(null);
-        mRepositoryImpl.onDestroy();
+        mMainPresenter.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void showError(String error) {
+        mRecyclerView.setVisibility(View.GONE);
+        mTextViewError.setVisibility(View.VISIBLE);
+        mTextViewError.setText(error);
+    }
+
+    @Override
+    public void displayResult(List<HistorySearchDBModel> imageModels) {
+        mRecyclerView.setVisibility(View.VISIBLE);
+        mTextViewError.setVisibility(View.GONE);
+        mAdapter = new ImageSearchRecyclerAdapter(imageModels);
+        mRecyclerView.setAdapter(mAdapter);
     }
 }

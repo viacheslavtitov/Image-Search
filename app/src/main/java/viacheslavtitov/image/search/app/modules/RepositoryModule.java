@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import viacheslavtitov.image.search.app.presenters.main.MainPresenterImpl;
 import viacheslavtitov.image.search.app.repository.RepositoryImpl;
 import viacheslavtitov.image.search.app.repository.db.DataBaseHelper;
 import viacheslavtitov.image.search.app.repository.net.ApiService;
@@ -28,7 +29,6 @@ public class RepositoryModule {
                 .build();
     }
 
-    @Singleton
     @Provides
     Realm provideRealm(RealmConfiguration configuration) {
         return Realm.getInstance(configuration);
@@ -42,6 +42,11 @@ public class RepositoryModule {
     @Provides
     RepositoryImpl provideRepository(ApiService apiService, DataBaseHelper dataBaseHelper, DeviceUtils deviceUtils) {
         return new RepositoryImpl(apiService, dataBaseHelper, deviceUtils);
+    }
+
+    @Provides
+    MainPresenterImpl provideMainPresenter(RepositoryImpl repository) {
+        return new MainPresenterImpl(repository);
     }
 
 }
