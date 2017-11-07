@@ -48,6 +48,7 @@ public class RepositoryImpl extends AbstractBaseRepository {
             fetchOfflineImages(observer);
             return;
         }
+        String query = phrase;
         mApiService.searchImages(fields, sortOrder, phrase)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -72,7 +73,7 @@ public class RepositoryImpl extends AbstractBaseRepository {
                     @Override
                     public void onNext(SearchImagesResultModel searchImagesResultModel) {
                         Timber.d("onNext %d", searchImagesResultModel.images.size());
-                        List<HistorySearchDBModel> convertedData = convertOnlineDataToOffline(searchImagesResultModel);
+                        List<HistorySearchDBModel> convertedData = convertOnlineDataToOffline(searchImagesResultModel, query);
                         mDataBaseHelper.writeObjectsHistory(convertedData);
                         observer.onNext(convertedData);
                     }
@@ -91,13 +92,13 @@ public class RepositoryImpl extends AbstractBaseRepository {
         observer.onNext(listHistory);
     }
 
-    private List<HistorySearchDBModel> convertOnlineDataToOffline(SearchImagesResultModel searchImagesResultModel) {
+    private List<HistorySearchDBModel> convertOnlineDataToOffline(SearchImagesResultModel searchImagesResultModel, String phrase) {
         List<HistorySearchDBModel> convertedData = new ArrayList<>();
         for (ImageModel imageModel : searchImagesResultModel.images) {
             if (TextUtils.isEmpty(imageModel.getThumbUrl(0))) continue;
             HistorySearchDBModel historySearchDBModel = new HistorySearchDBModel();
             historySearchDBModel.setId(imageModel.id);
-            historySearchDBModel.setTitle(imageModel.title);
+            historySearchDBModel.setTitle(phrase);
             historySearchDBModel.setPhotoUrl(imageModel.getThumbUrl(0));
             convertedData.add(historySearchDBModel);
         }

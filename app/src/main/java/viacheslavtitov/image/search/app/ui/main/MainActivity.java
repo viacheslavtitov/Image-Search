@@ -1,17 +1,24 @@
-package viacheslavtitov.image.search.app.ui;
+package viacheslavtitov.image.search.app.ui.main;
 
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
@@ -19,12 +26,15 @@ import viacheslavtitov.image.search.app.ImageSearchApplication;
 import viacheslavtitov.image.search.app.R;
 import viacheslavtitov.image.search.app.repository.RepositoryImpl;
 import viacheslavtitov.image.search.app.repository.db.model.HistorySearchDBModel;
-import viacheslavtitov.image.search.app.utils.DeviceUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Inject
-    DeviceUtils mDeviceUtils;
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+    private ImageSearchRecyclerAdapter mAdapter;
+
+    @BindView(R.id.text_view_error)
+    TextView mTextViewError;
 
     @Inject
     RepositoryImpl mRepositoryImpl;
@@ -33,12 +43,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         ImageSearchApplication.get().getAppComponent().inject(this);
-        if (!mDeviceUtils.hasInternetConnection()) {
-            Timber.e("no internet connection");
-            return;
-        }
 
+        setUpView();
+
+    }
+
+    private void setUpView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
     }
 
     @Override
@@ -62,12 +78,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onNext(List<HistorySearchDBModel> imageModels) {
-
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mTextViewError.setVisibility(View.GONE);
+            mAdapter = new ImageSearchRecyclerAdapter(imageModels);
+            mRecyclerView.setAdapter(mAdapter);
         }
 
         @Override
         public void onError(Throwable e) {
-
+            mRecyclerView.setVisibility(View.GONE);
+            mTextViewError.setVisibility(View.VISIBLE);
+            mTextViewError.setText(e.getMessage());
         }
 
         @Override
@@ -93,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        mRecyclerView.setAdapter(null);
         mRepositoryImpl.onDestroy();
         super.onDestroy();
     }

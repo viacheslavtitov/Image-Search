@@ -3,7 +3,7 @@ package viacheslavtitov.image.search.app.modules;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import viacheslavtitov.image.search.app.ui.MainActivity;
+import viacheslavtitov.image.search.app.ui.main.MainActivity;
 
 /**
  * Created by Viacheslav Titov on 04.11.2017.
